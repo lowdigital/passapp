@@ -1,7 +1,7 @@
 
 # Passapp
 
-**PassApp** is a user authentication and password management web application that provides functionalities such as user registration, login, password recovery, and encrypted secret storage for each user. The application is built using PHP and MySQL with a simple frontend interface powered by the [Metronic UI Kit](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469) and [TinyMCE](https://www.tiny.cloud/).
+**Passapp** is a user authentication and password management web application that provides functionalities such as user registration, login, password recovery, and encrypted secret storage for each user. The application is built using PHP and MySQL with a simple frontend interface powered by the [Metronic UI Kit](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469) and [TinyMCE](https://www.tiny.cloud/).
 
 ## Features
 
