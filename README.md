@@ -150,3 +150,30 @@ cordova build android
 ```
 
 Full debugging guides included.
+
+## License
+
+This project is licensed under the MIT License.
+
+### Notes on Third-Party Licenses:
+- **[Metronic UI Kit](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469)**: This is a premium UI kit and requires a separate license purchased from Themeforest.
+- **[TinyMCE](https://www.tiny.cloud/)**: While TinyMCE offers a free tier, additional features may require a paid API key.
+- **Cordova Plugins**: The Cordova framework and its plugins (e.g., `cordova-plugin-device`, `cordova-plugin-inappbrowser`) are licensed under the Apache 2.0 license. Refer to their respective documentation for more details.
+
+## Credits
+
+- [Metronic UI Kit](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469) - Responsive admin dashboard template.
+- [TinyMCE](https://www.tiny.cloud/) - Rich text editor.
+- [PHP](https://www.php.net/) and [MySQL](https://www.mysql.com/) - Backend and database technologies.
+- [Apache Cordova](https://cordova.apache.org/) - Framework for building mobile applications.
+- [cordova-plugin-device](https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-device/) - Provides device information.
+- [cordova-plugin-inappbrowser](https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/) - For in-app browsing functionality.
+- [cordova-plugin-android-fingerprint-auth](https://github.com/mjwheatley/cordova-plugin-android-fingerprint-auth) - Fingerprint authentication plugin for Android.
+
+## Contributing
+
+Contributions are welcome! If you would like to contribute to this project, please fork the repository, create a new branch, and submit a pull request.
+
+## Contacts
+
+Follow updates on the Telegram channel: [low digital](https://t.me/low_digital).
