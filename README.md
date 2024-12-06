@@ -60,7 +60,7 @@ To style the application, you'll need to download the Metronic UI Kit.
 
 1. Purchase and download the Metronic UI Kit from [Themeforest](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469).
 2. Extract the downloaded archive.
-3. Copy the contents of `\metronic\metronic-v8.*\html\metronic_html_v8.*_demo1.zip\demo1\assets\` to the `/assets/` directory in the project.
+3. Copy the contents of `\metronic\metronic-v8.*\html\metronic_html_v8.*_demo1.zip\demo1ssets\` to the `/assets/` directory in the project.
 
 ### 4. Set up TinyMCE
 
@@ -100,50 +100,53 @@ http://yourdomain.com/
 
 You should now be able to register users, log in, and manage your encrypted secrets.
 
-## Usage
-
-### Registration
-
-Users can register by visiting the registration page (`/reg/`). The application validates the email format and ensures that the password meets the minimum length requirements. After registration, the user will receive an email with a confirmation link.
-
-### Login
-
-After successful registration and email confirmation, users can log in using their credentials. A "Remember me" option is available, which stores a session in the database and a cookie in the user's browser.
-
-### Password Recovery
-
-Users can recover their password by visiting the password recovery page (`/restore/`). They will receive an email with a link to reset their password.
-
-### Encrypted Secret Storage
-
-After logging in, users can save and encrypt sensitive data. The encrypted data is stored in the `data` column of the `users` table.
-
-## Security Considerations
-
-- Passwords are securely hashed using PHP's `password_hash()` function.
-- The application uses prepared statements to protect against SQL injection.
-- Sensitive data is encrypted using the user's master key (entered upon login).
-- It's recommended to serve the application over HTTPS to ensure data transmission security.
-
 ## Troubleshooting
 
 1. **Unable to delete `install.php`:** If the file isn't deleted after installation, ensure that the web server has the necessary write permissions for the project directory.
 2. **Database connection issues:** Ensure that the credentials in `options.php` are correct and that your MySQL/MariaDB server is running.
 3. **CSS or JS not loading:** Make sure that the Metronic UI Kit files are correctly placed in the `/assets/` directory.
 
-## License
+## Mobile App Build
 
-This project is licensed under the MIT License.
+Passapp is also available as a mobile application built with Apache Cordova. This allows users to securely manage passwords on Android and iOS devices. The mobile app handles encrypted data storage and authentication via fingerprint (Android only).
 
-## Credits
+### Requirements
 
-- [Metronic UI Kit](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469)
-- [TinyMCE](https://www.tiny.cloud/)
+- Node.js and npm installed. Download from the official [Node.js website](https://nodejs.org/).
+- Apache Cordova installed globally:
 
-## Contributing
+  ```bash
+  npm install -g cordova
+  ```
 
-Contributions are welcome! If you would like to contribute to this project, please fork the repository, create a new branch, and submit a pull request.
+- Java Development Kit (JDK) installed (for Android builds).
+- Android SDK installed with environment variables (`ANDROID_HOME`) correctly set.
+- macOS and Xcode installed (for iOS builds).
 
-## Contacts
+### Steps to Build
 
-Follow updates on the Telegram channel: [low digital](https://t.me/low_digital).
+1. **Clone the Repository:**
+    ```bash
+    git clone https://github.com/lowdigital/passapp.git
+    cd passapp
+    ```
+2. **Exclude Server-Side Directories:** Add `inc/`, `api/`, and `confirm/` in `.cordovaignore`.
+
+3. **Set Up Cordova:** Follow with:
+    ```bash
+    cordova create passapp com.passapp.app Passapp
+    cd passapp
+    ```
+
+4. Add Platforms for Android/iOS:
+    ```bash
+    cordova platform add android
+    cordova platform add ios
+    ```
+
+### Build Mobile Application
+```bash
+cordova build android
+```
+
+Full debugging guides included.
