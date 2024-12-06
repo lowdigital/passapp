@@ -60,7 +60,7 @@ To style the application, you'll need to download the Metronic UI Kit.
 
 1. Purchase and download the Metronic UI Kit from [Themeforest](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469).
 2. Extract the downloaded archive.
-3. Copy the contents of `\metronic\metronic-v8.*\html\metronic_html_v8.*_demo1.zip\demo1ssets\` to the `/assets/` directory in the project.
+3. Copy the contents of `\metronic\metronic-v8.*\html\metronic_html_v8.*_demo1.zip\demo1\assets\` to the `/assets/` directory in the project.
 
 ### 4. Set up TinyMCE
 
