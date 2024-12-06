@@ -30,6 +30,7 @@ You can check out the project right now: https://passapp.ru
 ```bash
 git clone https://github.com/lowdigital/passapp.git
 cd passapp
+cd www
 ```
 
 ### 2. Configure the Database
