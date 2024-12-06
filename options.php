@@ -1,16 +1,16 @@
 <?php
-    $db_host		= "localhost";
-    $db_login		= "";
-    $db_password	= "";
-    $db_name		= "";
+    $db_host = "";
+    $db_login = "";
+    $db_password = "";
+    $db_name = "";
     
-    $mail_host		= "";
-    $mail_login		= "";
-    $mail_password	= "";
-    $mail_name		= "";
-    $mail_port		= 465;
+    $mail_host  = "";
+    $mail_login = "";
+    $mail_password = '';
+    $mail_name = "Passapp";
+    $mail_port = 465;
     
-    $domain			= "";
+    $domain = "";
     
 	mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 	try {
@@ -23,4 +23,3 @@
 	function generateRandomString($length = 32) {
 		return bin2hex(random_bytes($length / 2));
 	}
-?>

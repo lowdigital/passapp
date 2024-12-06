@@ -43,6 +43,6 @@
 		}
 	} catch (Exception $e) {
 		echo 'Ошибка: ' . $e->getMessage();
-		$link->close();
 	}
-?>
+	
+	$link->close();

@@ -1,15 +1,47 @@
 <?php
+	header('Access-Control-Allow-Credentials: true');
+	$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+	$allowed_origins = [
+		'https://localhost',
+		'null'
+	];
+	if (in_array($origin, $allowed_origins)) {
+		header("Access-Control-Allow-Origin: $origin");
+	} else {
+		header("Access-Control-Allow-Origin: null");
+	}
+	
 	session_start();
-
 	header('Content-Type: application/json');
-
 	include '../../../options.php';
 
-	if (!isset($_SESSION['login'])) {
-		http_response_code(401);
-		echo json_encode(['error' => 'Ошибка авторизации']);
-		exit;
+	if (isset($_GET['hash'])){
+		$hash = $_GET['hash'];
+		
+		$query = $link->prepare("SELECT login FROM `sessions` WHERE `hash` = ?");
+		$query->bind_param("s", $hash);
+		$query->execute();
+		$result = $query->get_result();
+
+		if ($result->num_rows !== 1) {
+			$output['error'] = "Ошибка авторизации";
+			echo json_encode($output);
+			exit;
+		}
+		
+		$login = $result->fetch_assoc()['login'];
+	} else {
+		if (!isset($_SESSION['login'])) {
+			http_response_code(401);
+			echo json_encode(['error' => 'Ошибка авторизации']);
+			$link->close();
+			exit;
+		}
+		
+		$login = $_SESSION['login'];
 	}
+	
+
 
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		http_response_code(405);
@@ -17,7 +49,7 @@
 		exit;
 	}
 
-	$login = $_SESSION['login'];
+	
 	$password = $_POST['password'] ?? '';
 	$confirm = $_POST['confirm'] ?? '';
 
@@ -67,4 +99,3 @@
 
 	$update_stmt->close();
 	$link->close();
-?>

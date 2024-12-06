@@ -1,4 +1,17 @@
 <?php
+	header('Access-Control-Allow-Credentials: true');
+	$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+	$allowed_origins = [
+		'https://localhost',
+		'null'
+	];
+
+	if (in_array($origin, $allowed_origins)) {
+		header("Access-Control-Allow-Origin: $origin");
+	} else {
+		header("Access-Control-Allow-Origin: null");
+	}
+
 	header('Content-Type: application/json');
 
 	require '../../../inc/PHPMailer/Exception.php';
@@ -40,7 +53,21 @@
 
 				$mail = new PHPMailer(true);
 				try {
-					$mail->CharSet = 'UTF-8';
+					$mail -> isSMTP();
+                	$mail -> Host = $mail_host;
+                	$mail -> Port = $mail_port;
+                	$mail -> SMTPAuth = true;
+                	$mail -> SMTPSecure = 'ssl';
+                	$mail -> Username = $mail_login;
+                	$mail -> Password = $mail_password;
+                	$mail -> SMTPOptions = array(
+                		'ssl' => array(
+                			'verify_peer' => false,
+                			'verify_peer_name' => false,
+                			'allow_self_signed' => true
+                		)
+                	);
+                	$mail -> CharSet = 'UTF-8';
 					$mail->setFrom($mail_login, $mail_name);
 					$mail->addAddress($login);
 					$mail->Subject = $email_theme;
@@ -58,4 +85,3 @@
 
 	echo json_encode($output);
 	$link->close();
-?>

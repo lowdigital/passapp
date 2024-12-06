@@ -1,86 +1,130 @@
 <?php
-	session_start();
-	include("../options.php");
-	
-	if (!isset($_GET['action'])){
-		exit;
-	}
-	
-	if (!isset($_GET['event'])){
-		exit;
-	}
-	
-	if ($_GET['action'] == "signup"){
-		$event = $link->real_escape_string($_GET['event']);
-		if (($event == NULL) OR ($event == '')){
-			$link->close();
-			header('Location: /');
-			exit;
-		}
-		
-		$counter = 0;
-		$user_id = 0;
-		$query = "SELECT * FROM `users` WHERE `event` = '$event'";
-		if ($result = $link -> query($query)){
-			while ($row = $result->fetch_assoc()){
-				$counter++;
-				$user_id = $row['id'];
-				$user_login = $row['login'];
-			}
-		}
-		
-		if ($counter == 0){
-			$link->close();
-			header('Location: /');
-			exit;
-		}
-		
-		if ($counter == 1){
-			$query = "UPDATE `users` SET `event` = NULL, `status` = 'active' WHERE `id` = $user_id";
-			$link -> query($query);
-			$_SESSION['login'] = $user_login;
-			
-			$link->close();
-			header('Location: /');
-			exit;
-		}
-	}
-	
-	
-	if ($_GET['action'] == "restore"){
-		$event = $link->real_escape_string($_GET['event']);
-		if (($event == NULL) OR ($event == '')){
-			$link->close();
-			header('Location: /');
-			exit;
-		}
-		
-		$counter = 0;
-		$user_id = 0;
-		$query = "SELECT * FROM `users` WHERE `event` = '$event'";
-		if ($result = $link -> query($query)){
-			while ($row = $result->fetch_assoc()){
-				$counter++;
-				$user_id = $row['id'];
-				$user_login = $row['login'];
-			}
-		}
-		
-		if ($counter == 0){
-			$link->close();
-			header('Location: /');
-			exit;
-		}
-		
-		$password = md5(generateRandomString());
-		if ($counter == 1){
-			$query = "UPDATE `users` SET `event` = NULL, `status` = 'active', `password` = '$password' WHERE `id` = $user_id";
-			$link -> query($query);
-			$_SESSION['login'] = $user_login;
-			
-			$link->close();
-			header('Location: /');
-			exit;
-		}
-	}
-?>
+    include("../options.php");
+    
+    if (!isset($_GET['action']) || !isset($_GET['event'])) {
+        $link->close();
+        header('Location: /index.html');
+        exit;
+    }
+    
+    $action = $_GET['action'];
+    $event = $link->real_escape_string($_GET['event']);
+    
+    if (empty($event)) {
+        $link->close();
+        header('Location: /index.html');
+        exit;
+    }
+    
+    if ($action === "signup") {
+        $stmt = $link->prepare("SELECT id, login FROM users WHERE event = ?");
+        $stmt->bind_param("s", $event);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows !== 1) {
+            $stmt->close();
+            $link->close();
+            header('Location: /index.html');
+            exit;
+        }
+    
+        $user = $result->fetch_assoc();
+        $user_id = $user['id'];
+        $user_login = $user['login'];
+        $stmt->close();
+    
+        $stmt = $link->prepare("UPDATE users SET event = NULL, status = 'active' WHERE id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $stmt->close();
+    
+        $hash = generateRandomString();
+        $stmt = $link->prepare("INSERT INTO sessions (login, hash) VALUES (?, ?)");
+        $stmt->bind_param("ss", $user_login, $hash);
+        $stmt->execute();
+        $stmt->close();
+    
+        $link->close();
+    
+        echo "<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Подтверждение регистрации</title>
+        <script>
+            (function() {
+                var sessionData = {
+                    login: '".htmlspecialchars(addslashes($user_login))."',
+                    hash: '".htmlspecialchars(addslashes($hash))."'
+                };
+                localStorage.setItem('sessionData', JSON.stringify(sessionData));
+                window.location.href = '/main.html';
+            })();
+        </script>
+    </head>
+    <body>
+        <p>Подтверждение регистрации...</p>
+    </body>
+    </html>";
+        exit;
+    }
+    
+    if ($action === "restore") {
+        $stmt = $link->prepare("SELECT id, login FROM users WHERE event = ?");
+        $stmt->bind_param("s", $event);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows !== 1) {
+            $stmt->close();
+            $link->close();
+            header('Location: /index.html');
+            exit;
+        }
+    
+        $user = $result->fetch_assoc();
+        $user_id = $user['id'];
+        $user_login = $user['login'];
+        $stmt->close();
+    
+        $newPassPlain = generateRandomString(8);
+        $newPassHash = password_hash($newPassPlain, PASSWORD_DEFAULT);
+    
+        $stmt = $link->prepare("UPDATE users SET event = NULL, status = 'active', password = ? WHERE id = ?");
+        $stmt->bind_param("si", $newPassHash, $user_id);
+        $stmt->execute();
+        $stmt->close();
+    
+        $hash = generateRandomString();
+        $stmt = $link->prepare("INSERT INTO sessions (login, hash) VALUES (?, ?)");
+        $stmt->bind_param("ss", $user_login, $hash);
+        $stmt->execute();
+        $stmt->close();
+    
+        $link->close();
+    
+        echo "<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Восстановление пароля</title>
+        <script>
+            (function() {
+                var sessionData = {
+                    login: '".htmlspecialchars(addslashes($user_login))."',
+                    hash: '".htmlspecialchars(addslashes($hash))."'
+                };
+                localStorage.setItem('sessionData', JSON.stringify(sessionData));
+                window.location.href = '/profile.html';
+            })();
+        </script>
+    </head>
+    <body>
+        <p>Восстановление пароля...</p>
+    </body>
+    </html>";
+        exit;
+    }
+    
+    $link->close();
+    header('Location: /index.html');
+    exit;
