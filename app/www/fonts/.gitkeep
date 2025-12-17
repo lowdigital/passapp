@@ -1,0 +1,11 @@
+# Шрифты для оффлайн работы
+# Скачайте JetBrains Mono с https://www.jetbrains.com/lp/mono/
+# и поместите сюда файлы:
+# - JetBrainsMono-Regular.woff2
+# - JetBrainsMono-Medium.woff2
+# - JetBrainsMono-SemiBold.woff2
+
+# Альтернативно, приложение будет использовать системные моноширинные шрифты
+
+
+

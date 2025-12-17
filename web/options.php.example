@@ -1,0 +1,56 @@
+<?php
+/**
+ * Application Configuration
+ * 
+ * Copy this file to options.php and fill in your actual credentials.
+ * NEVER commit options.php to version control!
+ */
+
+// Database Configuration
+$db_host = "localhost";
+$db_login = "your_db_user";
+$db_password = "your_db_password";
+$db_name = "your_db_name";
+
+// Email Configuration (SMTP)
+$mail_host = "mail.example.com";
+$mail_login = "no-reply@example.com";
+$mail_password = "your_mail_password";
+$mail_name = "Passapp";
+$mail_port = 465;
+
+// Domain Configuration
+$domain = "your-domain.com";
+
+// Database Connection
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+try {
+    $link = new mysqli($db_host, $db_login, $db_password, $db_name);
+    $link->set_charset('utf8mb4');
+} catch (mysqli_sql_exception $e) {
+    die('Database connection error');
+}
+
+/**
+ * Generate random string
+ */
+function generateRandomString($length = 32) {
+    return bin2hex(random_bytes($length / 2));
+}
+
+/**
+ * Error logging
+ */
+function logError($message, $filename = "ERROR") {
+    $trace = debug_backtrace();
+    $text = date("Y-m-d H:i:s") . " (" . ($_SERVER['REMOTE_ADDR'] ?? 'CLI') . ")\n";
+    $text .= ($trace[0]['file'] ?? 'unknown') . ":\n" . $message . "\n\n";
+    
+    $dir = __DIR__ . "/log/" . date("Y/Y-m");
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+    
+    file_put_contents("$dir/$filename.log", $text, FILE_APPEND | LOCK_EX);
+}
+

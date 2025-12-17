@@ -1,0 +1,40 @@
+{
+  "name": "passapp",
+  "displayName": "Passapp",
+  "version": "2.0.0",
+  "description": "Secure password manager with client-side encryption",
+  "main": "index.js",
+  "scripts": {
+    "build:android": "cordova build android",
+    "build:android:release": "cordova build android --release",
+    "run:android": "cordova run android",
+    "prepare": "cordova prepare"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "password-manager",
+    "encryption"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "cordova-android": "^12.0.1",
+    "cordova-ios": "^7.0.1",
+    "cordova-plugin-device": "^3.0.0",
+    "cordova-plugin-statusbar": "^4.0.0",
+    "cordova-plugin-splashscreen": "^6.0.2",
+    "cordova-plugin-android-fingerprint-auth": "^1.5.0"
+  },
+  "cordova": {
+    "platforms": [
+      "android"
+    ],
+    "plugins": {
+      "cordova-plugin-device": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-android-fingerprint-auth": {}
+    }
+  }
+}
+

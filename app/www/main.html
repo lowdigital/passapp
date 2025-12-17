@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passapp — Secrets</title>
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <a href="main.html" class="header-logo">
+                <img src="logo.png" alt="Passapp">
+                <span>Passapp</span>
+            </a>
+            <nav class="header-nav">
+                <a href="main.html" class="active">Secrets</a>
+                <a href="profile.html">Profile</a>
+                <a href="#" onclick="logout(); return false;">Sign Out</a>
+            </nav>
+        </header>
+        
+        <main class="main-content">
+            <div class="content-card">
+                <div id="message" class="message"></div>
+                
+                <input type="hidden" id="encryptedData">
+                
+                <!-- Master Key Section -->
+                <div id="masterKeySection">
+                    <p id="status">Loading...</p>
+                    <input type="password" id="masterpassword" class="form-input" placeholder="Enter master key">
+                    <div class="btn-group mt-4">
+                        <button type="button" id="decryptBtn" class="btn btn-primary" onclick="decryptData()">Decrypt</button>
+                        <button type="button" id="createBtn" class="btn btn-primary" onclick="createNewContent()">Create</button>
+                    </div>
+                    <!-- Reset button (shown only if data exists) -->
+                    <div id="resetSection" class="reset-section">
+                        <p class="reset-hint">Forgot your master key?</p>
+                        <button type="button" class="btn btn-danger-outline btn-sm" onclick="openResetModal()">
+                            🗑️ Reset all data
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Editor Section -->
+                <div id="editorSection">
+                    <div class="editor-toolbar">
+                        <button type="button" class="btn btn-success" onclick="saveData()">💾 Save</button>
+                        <button type="button" class="btn btn-secondary" onclick="openChangeMasterKeyModal()">🔑 Change Master Key</button>
+                    </div>
+                    <div class="editor-wrapper">
+                        <textarea id="editor"></textarea>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Change Master Key Modal -->
+    <div id="masterKeyModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">🔑 Change Master Key</h3>
+                <button type="button" class="modal-close" onclick="closeModal('masterKeyModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Enter a new master key. After saving, all data will be encrypted with the new key.</p>
+                <div class="form-group">
+                    <label class="form-label">New Master Key</label>
+                    <input type="password" id="newMasterKey" class="form-input" placeholder="Enter new master key">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm</label>
+                    <input type="password" id="confirmMasterKey" class="form-input" placeholder="Repeat master key">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('masterKeyModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="confirmChangeMasterKey()">Change Key</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Reset Data Modal -->
+    <div id="resetModal" class="modal-overlay">
+        <div class="modal modal-danger">
+            <div class="modal-header">
+                <h3 class="modal-title">⚠️ Reset All Data</h3>
+                <button type="button" class="modal-close" onclick="closeModal('resetModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="warning-box">
+                    <p><strong>Warning!</strong> This action is irreversible.</p>
+                    <p>All your encrypted data will be <strong>permanently deleted</strong>.</p>
+                    <p>Data recovery is impossible!</p>
+                </div>
+                <p class="modal-description mt-4">If you forgot your master key, you can delete all data and start fresh with a new master key.</p>
+                <div class="form-group">
+                    <label class="form-label">Type "DELETE" to confirm</label>
+                    <input type="text" id="resetConfirmText" class="form-input" placeholder="DELETE" autocomplete="off">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('resetModal')">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmResetData()">Delete Everything</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="vendor/tinymce/tinymce.min.js"></script>
+    <script src="vendor/crypto-js/crypto-js.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+

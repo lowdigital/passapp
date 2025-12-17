@@ -1,179 +1,321 @@
+# Passapp — Secure Password Manager
 
-# Passapp - Secure Password Manager
+<p align="center">
+  <img src="web/logo.png" alt="Passapp Logo" width="100">
+</p>
 
-**Passapp** is a password management web application that provides functionalities such as user registration, login, password recovery, and encrypted secret storage for each user. The application is built using PHP and MySQL with a simple frontend interface powered by the [Metronic UI Kit](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469) and [TinyMCE](https://www.tiny.cloud/).
+<p align="center">
+  <strong>A self-hosted password manager with client-side encryption</strong>
+</p>
 
-## Demo
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#security">Security</a> •
+  <a href="#installation">Installation</a> •
+  <a href="#mobile-app">Mobile App</a> •
+  <a href="#api">API</a> •
+  <a href="#license">License</a>
+</p>
 
-You can check out the project right now: https://passapp.ru
+---
 
 ## Features
 
-- User registration and login.
-- Password recovery with email confirmation.
-- Securely stores user data with encryption.
-- Supports sessions and "Remember me" functionality for extended login sessions.
-- Simple interface built with the Metronic UI Kit.
-- TinyMCE integration for rich text editing.
+- 🔐 **Client-side AES encryption** — Your data is encrypted in the browser before being sent to the server
+- 🔑 **Master key** — Only you know your master key; it's never transmitted to the server
+- 📱 **Mobile app** — Native Android app with Apache Cordova
+- 👆 **Biometric authentication** — Fingerprint unlock on mobile devices
+- 📧 **Email verification** — Secure registration and password recovery
+- 🌙 **Dark theme** — Modern, minimalist dark UI
+- 🚀 **Self-hosted** — Full control over your data
 
-## Requirements
+## Security
 
-- PHP 7.4 or higher
-- MySQL 5.7 or MariaDB 10.3 or higher
-- [TinyMCE](https://www.tiny.cloud/)
-- [Metronic UI Kit](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469)
+Passapp uses a **zero-knowledge architecture**:
+
+1. Your **master key** never leaves your device
+2. All data is encrypted with **AES-256** using [CryptoJS](https://github.com/brix/crypto-js)
+3. The server only stores **encrypted blobs** — it cannot decrypt your data
+4. Account passwords are hashed with **bcrypt** (PHP `password_hash`)
+5. Sessions use secure random tokens
+
+> ⚠️ **Warning**: If you forget your master key, your data cannot be recovered. The server has no way to decrypt it.
+
+## Project Structure
+
+```
+passapp/
+├── app/                    # Mobile app (Apache Cordova)
+│   ├── config.xml         # Cordova configuration
+│   ├── package.json       # Dependencies
+│   ├── res/               # App icons
+│   └── www/               # Web assets
+│       ├── css/           # Styles
+│       ├── fonts/         # JetBrains Mono
+│       ├── js/app.js      # Application logic
+│       └── vendor/        # TinyMCE, CryptoJS
+│
+└── web/                    # Web version (PHP backend)
+    ├── api/               # REST API endpoints
+    │   ├── user/          # Auth, signup, restore, update
+    │   └── secret/        # Get, save, reset
+    ├── confirm/           # Email confirmation handler
+    ├── inc/               # PHP includes
+    │   ├── api.php        # API helpers
+    │   └── PHPMailer/     # Email library
+    ├── options.php        # Configuration (credentials)
+    ├── schema.sql         # Database schema
+    └── *.html             # Frontend pages
+```
 
 ## Installation
 
-### 1. Clone the repository
+### Requirements
+
+- PHP 7.4+ with mysqli extension
+- MySQL/MariaDB 10.3+
+- SMTP server for sending emails
+- Web server (Apache/Nginx) with HTTPS
+
+### Web Version Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/passapp.git
+   cd passapp
+   ```
+
+2. **Create database**
+   ```bash
+   mysql -u root -p -e "CREATE DATABASE passapp CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci"
+   mysql -u root -p passapp < web/schema.sql
+   ```
+
+3. **Configure the application**
+   
+   Edit `web/options.php` with your credentials:
+   ```php
+   // Database
+   $db_host = "localhost";
+   $db_login = "your_db_user";
+   $db_password = "your_db_password";
+   $db_name = "passapp";
+
+   // Email (SMTP)
+   $mail_host = "mail.example.com";
+   $mail_login = "no-reply@example.com";
+   $mail_password = "your_mail_password";
+   $mail_name = "Passapp";
+   $mail_port = 465;
+
+   // Domain
+   $domain = "passapp.example.com";
+   ```
+
+4. **Configure the frontend**
+   
+   Edit `web/js/app.js`:
+   ```javascript
+   const API_URL = "https://passapp.example.com";
+   ```
+
+5. **Upload to your server**
+   
+   Upload the `web/` directory contents to your web server's document root.
+
+6. **Set up HTTPS**
+   
+   Passapp requires HTTPS for security. Use Let's Encrypt or your preferred SSL provider.
+
+7. **Configure CORS (if needed)**
+   
+   Add to your `.htaccess`:
+   ```apache
+   Header set Access-Control-Allow-Origin "https://your-app-domain.com"
+   Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+   Header set Access-Control-Allow-Headers "Content-Type"
+   ```
+
+### Testing Locally
+
+For local development, you can use PHP's built-in server:
 
 ```bash
-git clone https://github.com/lowdigital/passapp.git
-cd passapp
-cd www
+cd web
+php -S localhost:8000
 ```
 
-### 2. Configure the Database
+Then open http://localhost:8000 in your browser.
 
-You need to set up a MySQL or MariaDB database for the application.
+## Mobile App
 
-1. Open `options.php` and configure the database connection settings:
-
-```php
-$db_host = 'localhost';      // Database host
-$db_login = 'username';      // Database username
-$db_password = 'password';   // Database password
-$db_name = 'passapp';        // Database name
-
-$mail_host = 'mail.example.com';    // Mail server host
-$mail_login = 'no-reply@example.com'; // Mail server login
-$mail_password = 'password';        // Mail server password
-$mail_name = 'Passapp';             // Name of sender
-$mail_port = 465;                   // Mail server port (SMTP)
-
-$domain = 'yourdomain.com';         // Your domain
-```
-
-### 3. Set up Metronic UI Kit
-
-To style the application, you'll need to download the Metronic UI Kit.
-
-1. Purchase and download the Metronic UI Kit from [Themeforest](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469).
-2. Extract the downloaded archive.
-3. Copy the contents of `\metronic\metronic-v8.*\html\metronic_html_v8.*_demo1.zip\demo1\assets\` to the `/assets/` directory in the project.
-
-### 4. Set up TinyMCE
-
-TinyMCE is used for rich text editing in the application.
-
-1. Register an account and create an API key for TinyMCE at [TinyMCE](https://www.tiny.cloud/).
-2. Download the necessary files for TinyMCE from their [official site](https://www.tiny.cloud/).
-3. Place the downloaded files inside the `/vendor/tinymce/` directory.
-4. You may need to configure your TinyMCE API key in your TinyMCE initialization script.
-
-### 5. Run the Installer
-
-After configuring your database, run the installer to set up the necessary tables.
-
-1. Make sure your web server is running.
-2. Visit `http://yourdomain.com/install.php` in your browser.
-3. The installer will create the required database structure and then delete itself after the installation completes.
-
-**Database structure:**
-
-- `users`: Stores user data, including status, login, password hash, and encrypted user data.
-- `sessions`: Stores user session data for "Remember me" functionality.
-
-### 6. Directory Permissions
-
-Ensure that your web server has proper permissions to write to the following directories:
-
-- `install.php` should have write permissions to allow self-deletion after installation.
-
-### 7. Test the Application
-
-After the installation is complete, you can log in to the application or register a new user. The URL to access the application is:
-
-```bash
-http://yourdomain.com/
-```
-
-You should now be able to register users, log in, and manage your encrypted secrets.
-
-## Troubleshooting
-
-1. **Unable to delete `install.php`:** If the file isn't deleted after installation, ensure that the web server has the necessary write permissions for the project directory.
-2. **Database connection issues:** Ensure that the credentials in `options.php` are correct and that your MySQL/MariaDB server is running.
-3. **CSS or JS not loading:** Make sure that the Metronic UI Kit files are correctly placed in the `/assets/` directory.
-
-## Mobile App Build
-
-Passapp is also available as a mobile application built with Apache Cordova. This allows users to securely manage passwords on Android and iOS devices. The mobile app handles encrypted data storage and authentication via fingerprint (Android only).
+The mobile app is built with Apache Cordova for Android.
 
 ### Requirements
 
-- Node.js and npm installed. Download from the official [Node.js website](https://nodejs.org/).
-- Apache Cordova installed globally:
+- Node.js 16+
+- Java JDK 11+
+- Android SDK
+- Cordova CLI
 
-  ```bash
-  npm install -g cordova
-  ```
+### Building the App
 
-- Java Development Kit (JDK) installed (for Android builds).
-- Android SDK installed with environment variables (`ANDROID_HOME`) correctly set.
-- macOS and Xcode installed (for iOS builds).
+1. **Install dependencies**
+   ```bash
+   cd app
+   npm install
+   ```
 
-### Steps to Build
+2. **Configure API URL**
+   
+   Edit `www/js/app.js`:
+   ```javascript
+   const API_URL = "https://passapp.example.com";
+   ```
 
-1. **Clone the Repository:**
-    ```bash
-    git clone https://github.com/lowdigital/passapp.git
-    cd passapp
-    ```
-2. **Exclude Server-Side Directories:** Add `inc/`, `api/`, and `confirm/` in `.cordovaignore`.
+3. **Add Android platform**
+   ```bash
+   npx cordova platform add android
+   ```
 
-3. **Set Up Cordova:** Follow with:
-    ```bash
-    cordova create passapp com.passapp.app Passapp
-    cd passapp
-    ```
+4. **Build APK**
+   ```bash
+   npm run build:android
+   ```
+   
+   Or for release build:
+   ```bash
+   npm run build:android:release
+   ```
 
-4. Add Platforms for Android/iOS:
-    ```bash
-    cordova platform add android
-    cordova platform add ios
-    ```
+5. **Run on device/emulator**
+   ```bash
+   npm run run:android
+   ```
 
-### Build Mobile Application
-```bash
-cordova build android
+### Cordova Plugins Used
+
+- `cordova-plugin-device` — Device information
+- `cordova-plugin-statusbar` — Status bar styling
+- `cordova-plugin-splashscreen` — Splash screen
+- `cordova-plugin-android-fingerprint-auth` — Biometric authentication
+
+## API
+
+### Authentication
+
+#### POST /api/user/auth/
+Login with email and password.
+
+**Request:**
+```
+login=user@example.com&password=mypassword
 ```
 
-Full debugging guides included.
+**Response:**
+```json
+{
+  "success": true,
+  "hash": "session_token_here"
+}
+```
 
-## License
+#### POST /api/user/signup/
+Register a new account.
 
-This project is licensed under the MIT License.
+**Request:**
+```
+login=user@example.com&password=mypassword&confirm=mypassword
+```
 
-### Notes on Third-Party Licenses:
-- **[Metronic UI Kit](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469)**: This is a premium UI kit and requires a separate license purchased from Themeforest.
-- **[TinyMCE](https://www.tiny.cloud/)**: While TinyMCE offers a free tier, additional features may require a paid API key.
-- **Cordova Plugins**: The Cordova framework and its plugins (e.g., `cordova-plugin-device`, `cordova-plugin-inappbrowser`) are licensed under the Apache 2.0 license. Refer to their respective documentation for more details.
+#### POST /api/user/restore/
+Request password recovery email.
 
-## Credits
+#### POST /api/user/update/?hash=SESSION
+Change account password.
 
-- [Metronic UI Kit](https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469) - Responsive admin dashboard template.
-- [TinyMCE](https://www.tiny.cloud/) - Rich text editor.
-- [PHP](https://www.php.net/) and [MySQL](https://www.mysql.com/) - Backend and database technologies.
-- [Apache Cordova](https://cordova.apache.org/) - Framework for building mobile applications.
-- [cordova-plugin-device](https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-device/) - Provides device information.
-- [cordova-plugin-inappbrowser](https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/) - For in-app browsing functionality.
-- [cordova-plugin-android-fingerprint-auth](https://github.com/mjwheatley/cordova-plugin-android-fingerprint-auth) - Fingerprint authentication plugin for Android.
+### Secrets
+
+#### GET /api/secret/get/?hash=SESSION
+Get encrypted data.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": "U2FsdGVkX1..."  // AES-encrypted blob
+}
+```
+
+#### POST /api/secret/save/?hash=SESSION
+Save encrypted data.
+
+**Request:**
+```
+secret_data=U2FsdGVkX1...
+```
+
+#### POST /api/secret/reset/?hash=SESSION
+Delete all encrypted data (for master key recovery).
+
+## Customization
+
+### Theming
+
+Edit CSS variables in `web/css/style.css`:
+
+```css
+:root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --accent: #3b82f6;
+    --success: #10b981;
+    --error: #ef4444;
+    /* ... */
+}
+```
+
+### Localization
+
+The app includes Russian language support for TinyMCE editor. Add more languages by:
+
+1. Download language pack from [TinyMCE](https://www.tiny.cloud/get-tiny/language-packages/)
+2. Place in `vendor/tinymce/langs/`
+3. Change `language: 'en'` in `app.js`
+
+## Troubleshooting
+
+### Email not sending
+- Check SMTP credentials in `options.php`
+- Verify your server allows outbound connections on port 465/587
+- Check the `log/` directory for error logs
+
+### CORS errors
+- Ensure your API domain matches `API_URL` in `app.js`
+- Add proper CORS headers in `.htaccess` or server config
+
+### Session expired
+- Sessions are stored in the `sessions` table
+- You can add automatic cleanup via cron job
 
 ## Contributing
 
-Contributions are welcome! If you would like to contribute to this project, please fork the repository, create a new branch, and submit a pull request.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Contacts
+## License
 
-Follow updates on the Telegram channel: [low digital](https://t.me/low_digital).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [TinyMCE](https://www.tiny.cloud/) — Rich text editor
+- [CryptoJS](https://github.com/brix/crypto-js) — JavaScript crypto library
+- [PHPMailer](https://github.com/PHPMailer/PHPMailer) — Email sending library
+- [JetBrains Mono](https://www.jetbrains.com/lp/mono/) — Beautiful monospace font
+
+---
+
+<p align="center">
+  Made with ❤️ for privacy
+</p>
+
