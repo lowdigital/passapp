@@ -185,7 +185,7 @@ The mobile app is built with Apache Cordova for Android.
 4. **Add platforms**
    ```bash
    npx cordova platform add android
-   npx cordova platform add ios  # macOS only
+   npx cordova platform add ios
    ```
 
 5. **Install Cordova plugins**
@@ -372,3 +372,4 @@ Follow updates on the Telegram channel: [low digital](https://t.me/low_digital).
 <p align="center">
   Made with ❤️ for privacy
 </p>
+
