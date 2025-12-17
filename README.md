@@ -325,14 +325,6 @@ Edit CSS variables in `web/css/style.css`:
 }
 ```
 
-### Localization
-
-The app includes Russian language support for TinyMCE editor. Add more languages by:
-
-1. Download language pack from [TinyMCE](https://www.tiny.cloud/get-tiny/language-packages/)
-2. Place in `vendor/tinymce/langs/`
-3. Change `language: 'en'` in `app.js`
-
 ## Troubleshooting
 
 ### Email not sending
@@ -368,5 +360,6 @@ Follow updates on the Telegram channel: [low digital](https://t.me/low_digital).
 <p align="center">
   Made with ❤️ for privacy
 </p>
+
 
 
