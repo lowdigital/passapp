@@ -21,13 +21,13 @@
 
 ## Features
 
-- 🔐 **Client-side AES encryption** — Your data is encrypted in the browser before being sent to the server
-- 🔑 **Master key** — Only you know your master key; it's never transmitted to the server
-- 📱 **Mobile app** — Native Android app with Apache Cordova
-- 👆 **Biometric authentication** — Fingerprint unlock on mobile devices
-- 📧 **Email verification** — Secure registration and password recovery
-- 🌙 **Dark theme** — Modern, minimalist dark UI
-- 🚀 **Self-hosted** — Full control over your data
+- **Client-side AES encryption** — Your data is encrypted in the browser before being sent to the server
+- **Master key** — Only you know your master key; it's never transmitted to the server
+- **Mobile app** — Native Android app with Apache Cordova
+- **Biometric authentication** — Fingerprint unlock on mobile devices
+- **Email verification** — Secure registration and password recovery
+- **Dark theme** — Modern, minimalist dark UI
+- **Self-hosted** — Full control over your data
 
 ## Security
 
@@ -147,6 +147,10 @@ php -S localhost:8000
 
 Then open http://localhost:8000 in your browser.
 
+**Demo account** (if you imported `schema.sql` with example data):
+- Email: `demo@example.com`
+- Password: `demo123`
+
 ## Mobile App
 
 The mobile app is built with Apache Cordova for Android.
@@ -166,32 +170,78 @@ The mobile app is built with Apache Cordova for Android.
    npm install
    ```
 
-2. **Configure API URL**
+2. **Install Cordova CLI globally** (if not installed)
+   ```bash
+   npm install -g cordova
+   ```
+
+3. **Configure API URL**
    
    Edit `www/js/app.js`:
    ```javascript
    const API_URL = "https://passapp.example.com";
    ```
 
-3. **Add Android platform**
+4. **Add platforms**
    ```bash
    npx cordova platform add android
+   npx cordova platform add ios  # macOS only
    ```
 
-4. **Build APK**
+5. **Install Cordova plugins**
+   ```bash
+   npx cordova plugin add cordova-plugin-device
+   npx cordova plugin add cordova-plugin-statusbar
+   npx cordova plugin add cordova-plugin-splashscreen
+   npx cordova plugin add cordova-plugin-android-fingerprint-auth
+   ```
+
+### Building for Android
+
+1. **Build debug APK**
    ```bash
    npm run build:android
    ```
-   
-   Or for release build:
+
+2. **Build release APK**
    ```bash
    npm run build:android:release
    ```
 
-5. **Run on device/emulator**
+3. **Run on device/emulator**
    ```bash
    npm run run:android
    ```
+
+The APK will be in `platforms/android/app/build/outputs/apk/`.
+
+### Building for iOS
+
+> ⚠️ **Requirements**: macOS with Xcode installed
+
+1. **Add iOS platform**
+   ```bash
+   npx cordova platform add ios
+   ```
+
+2. **Build the project**
+   ```bash
+   npx cordova build ios
+   ```
+
+3. **Open in Xcode**
+   ```bash
+   open platforms/ios/Passapp.xcworkspace
+   ```
+
+4. **In Xcode**:
+   - Select your development team in Signing & Capabilities
+   - Choose your device or simulator
+   - Click Run (⌘+R)
+
+5. **For App Store distribution**:
+   - Archive the app (Product → Archive)
+   - Upload to App Store Connect
 
 ### Cordova Plugins Used
 
@@ -313,9 +363,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [PHPMailer](https://github.com/PHPMailer/PHPMailer) — Email sending library
 - [JetBrains Mono](https://www.jetbrains.com/lp/mono/) — Beautiful monospace font
 
+## Contacts
+
+Follow updates on the Telegram channel: [low digital](https://t.me/low_digital).
+
 ---
 
 <p align="center">
   Made with ❤️ for privacy
 </p>
-
