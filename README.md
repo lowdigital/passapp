@@ -348,10 +348,6 @@ The app includes Russian language support for TinyMCE editor. Add more languages
 - Sessions are stored in the `sessions` table
 - You can add automatic cleanup via cron job
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -372,4 +368,5 @@ Follow updates on the Telegram channel: [low digital](https://t.me/low_digital).
 <p align="center">
   Made with ❤️ for privacy
 </p>
+
 
